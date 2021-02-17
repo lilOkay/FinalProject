@@ -1,10 +1,14 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,14 +23,15 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
         {
             _productDal = productDal;
         }
-
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
-        {
+        {//atrubite sen bi kodu çağıracağın zaman git bi üstüne bak belli kurala uyanları çağır
+            //mesela üstte[log] yazarsan ilk olarak logla alakalı olanlar çalışacaktır
             //business codes
-            if (product.ProductName.Length<2)
-            {
-                return new ErrorResult(Messages.ProductNameInvalid);
-            }
+            //validation
+
+
+
             _productDal.Add(product);
             return new SuccesResult(Messages.ProductAdded);
         }
