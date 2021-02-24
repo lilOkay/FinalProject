@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Business.Concrete
-{
+{//her entitynin kendi sevisi olacak
     public class CategoryManager : ICategoryService
     {
         ICategoryDal _categoryDal;
@@ -16,18 +17,18 @@ namespace Business.Concrete
             _categoryDal = categoryDal;
         }
 
-        public List<Category> GetAll()
+        public IDataResult<List<Category>> GetAll()
         {
             //iş kodlarımı yazarım 
-            return _categoryDal.GetAll();
+            return new SuccesDataResult<List<Category>>(_categoryDal.GetAll());
         }
         //sellect * from Categories where categoryıd 3
-        public Category GetById(int categoryId)
+        public IDataResult<Category> GetById(int categoryId)
         {
-            return _categoryDal.Get(c => c.CategoryId == categoryId);
+            return new SuccesDataResult<Category>(_categoryDal.Get(c => c.CategoryId == categoryId));
         }
 
-        List<Category> ICategoryService.GetById(int categoryId)
+        IDataResult<List<Category>> ICategoryService.GetById(int categoryId)
         {
             throw new NotImplementedException();
         }
