@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinesAspects.Autofac;
 using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
@@ -31,7 +32,8 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
 
         }
 
-
+        //claim product.add ya da admin claimine sahip olması gerek 
+        [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {//atrubite sen bi kodu çağıracağın zaman git bi üstüne bak belli kurala uyanları çağır
