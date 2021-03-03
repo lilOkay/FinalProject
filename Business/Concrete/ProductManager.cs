@@ -3,6 +3,7 @@ using Business.BusinesAspects.Autofac;
 using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
@@ -35,6 +36,7 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
         //claim product.add ya da admin claimine sahip olması gerek 
         [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {//atrubite sen bi kodu çağıracağın zaman git bi üstüne bak belli kurala uyanları çağır
          //mesela üstte[log] yazarsan ilk olarak logla alakalı olanlar çalışacaktır
@@ -61,6 +63,7 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
 
         }
 
+        [CacheAspect] //key value
         public IDataResult<List<Product>> GetAll()
         {//bir iş sınıfı başka sınıfları newlemez
             //iş kodları yazılır
@@ -77,6 +80,8 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
             return new SuccesDataResult<List<Product>>(_productDal.GetAll(P => P.CategoryId == id));
         }
 
+        [CacheAspect]
+        //[PerformanceAspect(5)]//sistemin çalışması 5sn yi geçiyorsa beni uyar demek 
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccesDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
@@ -93,6 +98,7 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
         }
 
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]//içinde get olan bütün cacheleri uçurur
         public IResult Update(Product product)
         {
             var result = _productDal.GetAll(p => p.CategoryId == product.CategoryId).Count;
@@ -134,6 +140,12 @@ namespace Business.Concrete              //core katmanı tüm projeşlerde kulla
                 return new ErrorResult(Messages.CategoryLimitExeded);
             }
             return new SuccesResult();
+        }
+
+        //[TransactionScopeAspect]
+        public IResult AddTransactionalTest(Product product)
+        {
+            throw new NotImplementedException();
         }
     }
 }
